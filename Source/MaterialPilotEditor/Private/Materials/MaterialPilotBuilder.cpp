@@ -499,8 +499,14 @@ bool FMaterialPilotBuilder::AssignToTarget(const FMaterialPilotTarget& Target, U
     case EMaterialPilotTargetKind::SkeletalMeshAsset:
         if (USkeletalMesh* SkeletalMesh = Target.SkeletalMesh.Get())
         {
+            if (!SkeletalMesh->GetMaterials().IsValidIndex(Target.MaterialSlotIndex))
+            {
+                OutReport += FString::Printf(TEXT("Assignment failed: skeletal mesh slot %d is invalid.\n"), Target.MaterialSlotIndex);
+                return false;
+            }
+
             SkeletalMesh->Modify();
-            SkeletalMesh->SetMaterial(Target.MaterialSlotIndex, Instance);
+            SkeletalMesh->GetMaterials()[Target.MaterialSlotIndex].MaterialInterface = Instance;
             SkeletalMesh->PostEditChange();
             SkeletalMesh->MarkPackageDirty();
             OutReport += FString::Printf(TEXT("Assigned instance to skeletal mesh: %s slot %d\n"), *SkeletalMesh->GetName(), Target.MaterialSlotIndex);

@@ -294,10 +294,10 @@ FMaterialPilotBuildOptions SMaterialPilotPanel::MakeBuildOptions(bool bDryRun) c
     Options.bDryRun = bDryRun;
     Options.bFixTextureSettings =
         FixTextureSettingsCheckBox.IsValid() &&
-        FixTextureSettingsCheckBox->IsChecked() == ECheckBoxState::Checked;
+        FixTextureSettingsCheckBox->IsChecked();
     Options.bAssignToTarget =
         AssignTargetCheckBox.IsValid() &&
-        AssignTargetCheckBox->IsChecked() == ECheckBoxState::Checked;
+        AssignTargetCheckBox->IsChecked();
     Options.RequiredConfidence = Settings ? Settings->BuildConfidenceThreshold : 60;
     return Options;
 }
