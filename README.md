@@ -40,7 +40,7 @@ Select mesh/component -> select textures -> analyze -> dry run -> build material
 
 ## Compatibility
 
-MaterialPilot is delivered as a source C++ editor plugin. The `.uplugin` intentionally does not pin `EngineVersion`, so Unreal can rebuild it for UE 5.x projects and future UE5 versions when the editor APIs remain compatible.
+MaterialPilot is delivered as a source C++ editor plugin. The `.uplugin` intentionally does not pin `EngineVersion`, so Unreal can rebuild it for UE 5.x projects and future UE5 versions when the editor APIs remain compatible. Version 1.0.1 has been verified to compile in Unreal Engine 5.8.
 
 The plugin uses editor-side systems that are stable across UE5:
 
