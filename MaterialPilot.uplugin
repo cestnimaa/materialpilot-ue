@@ -1,7 +1,7 @@
 {
   "FileVersion": 3,
-  "Version": 2,
-  "VersionName": "1.0.1",
+  "Version": 3,
+  "VersionName": "1.1.0",
   "FriendlyName": "MaterialPilot UE",
   "Description": "Editor tool that analyzes texture sets, builds reusable Unreal materials, creates material instances, and assigns them to selected meshes.",
   "Category": "Materials",

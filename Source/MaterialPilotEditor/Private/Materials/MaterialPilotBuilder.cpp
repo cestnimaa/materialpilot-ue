@@ -65,6 +65,7 @@ namespace MaterialPilotBuilder
             Semantic == EMaterialPilotSemantic::Opacity ||
             Semantic == EMaterialPilotSemantic::Specular ||
             Semantic == EMaterialPilotSemantic::Gloss ||
+            Semantic == EMaterialPilotSemantic::Height ||
             Semantic == EMaterialPilotSemantic::PackedORM ||
             Semantic == EMaterialPilotSemantic::PackedRMA ||
             Semantic == EMaterialPilotSemantic::PackedMRA ||
@@ -85,7 +86,7 @@ FMaterialPilotBuildResult FMaterialPilotBuilder::Build(const FMaterialPilotSetAn
 
     if (Analysis.HasBlockingAmbiguity(Options.RequiredConfidence))
     {
-        Result.Report = TEXT("Build blocked: required inputs are missing or one or more textures are unresolved.\n\n");
+        Result.Report = TEXT("Cannot build: no usable material textures were detected.\n\n");
         Result.Report += Analysis.BuildReport();
         return Result;
     }
@@ -157,11 +158,15 @@ FString FMaterialPilotBuilder::MakeDryRunReport(const FMaterialPilotSetAnalysis&
 
     if (Analysis.HasBlockingAmbiguity(Options.RequiredConfidence))
     {
-        Report += TEXT("\nSTATUS: Build requires review before execution.\n");
+        Report += TEXT("\nSTATUS: CANNOT BUILD - no usable material textures were detected.\n");
+    }
+    else if (Analysis.Warnings.Num() > 0)
+    {
+        Report += TEXT("\nSTATUS: READY WITH WARNINGS - build will continue using the best resolved texture set.\n");
     }
     else
     {
-        Report += TEXT("\nSTATUS: Ready to build.\n");
+        Report += TEXT("\nSTATUS: READY - build will create and assign the material.\n");
     }
 
     return Report;
@@ -419,6 +424,11 @@ void FMaterialPilotBuilder::FixTextureSettings(const FMaterialPilotSetAnalysis& 
     {
         UTexture2D* Texture = TextureAnalysis.Texture.Get();
         if (!Texture)
+        {
+            continue;
+        }
+
+        if (!TextureAnalysis.bUsedByRecipe && TextureAnalysis.Semantic != EMaterialPilotSemantic::Height)
         {
             continue;
         }

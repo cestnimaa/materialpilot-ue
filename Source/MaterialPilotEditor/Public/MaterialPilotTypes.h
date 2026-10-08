@@ -20,6 +20,7 @@ enum class EMaterialPilotSemantic : uint8
     Emissive,
     Specular,
     Gloss,
+    Height,
     PackedORM,
     PackedRMA,
     PackedMRA,
@@ -63,6 +64,8 @@ struct FMaterialPilotTextureAnalysis
     FString ChannelRoute;
     int32 Confidence = 0;
     TArray<FString> Reasons;
+    bool bUsedByRecipe = false;
+    FString Resolution;
     bool bReviewRequired = true;
 
     FString ToReportLine() const;

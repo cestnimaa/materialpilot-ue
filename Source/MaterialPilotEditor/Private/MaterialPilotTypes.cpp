@@ -30,13 +30,19 @@ FString FMaterialPilotTextureAnalysis::ToReportLine() const
         ReasonText = TEXT("No strong evidence.");
     }
 
+    FString ResolutionText = Resolution;
+    if (ResolutionText.IsEmpty())
+    {
+        ResolutionText = bUsedByRecipe ? TEXT("Used") : (bReviewRequired ? TEXT("Review suggested") : TEXT("Ignored"));
+    }
+
     return FString::Printf(
-        TEXT("%s -> %s | %s | %d%% | %s%s"),
+        TEXT("%s -> %s | %s | %d%% | %s | %s"),
         *AssetName,
         *MaterialPilotSemanticToString(Semantic),
         *ChannelRoute,
         Confidence,
-        bReviewRequired ? TEXT("Review suggested | ") : TEXT("Ready | "),
+        *ResolutionText,
         *ReasonText);
 }
 
@@ -57,13 +63,7 @@ bool FMaterialPilotSetAnalysis::HasRequiredInputs() const
 
 bool FMaterialPilotSetAnalysis::HasBlockingAmbiguity(int32 RequiredConfidence) const
 {
-    for (const FMaterialPilotTextureAnalysis& Texture : Textures)
-    {
-        if (Texture.Semantic == EMaterialPilotSemantic::Unknown && Texture.Confidence < RequiredConfidence)
-        {
-            return true;
-        }
-    }
+    (void)RequiredConfidence;
     return !HasRequiredInputs();
 }
 
@@ -71,7 +71,7 @@ const FMaterialPilotTextureAnalysis* FMaterialPilotSetAnalysis::FindSemantic(EMa
 {
     return Textures.FindByPredicate([Semantic](const FMaterialPilotTextureAnalysis& Texture)
     {
-        return Texture.Semantic == Semantic;
+        return Texture.Semantic == Semantic && Texture.bUsedByRecipe;
     });
 }
 
@@ -123,6 +123,8 @@ FString MaterialPilotSemanticToString(EMaterialPilotSemantic Semantic)
         return TEXT("Specular");
     case EMaterialPilotSemantic::Gloss:
         return TEXT("Glossiness");
+    case EMaterialPilotSemantic::Height:
+        return TEXT("Height");
     case EMaterialPilotSemantic::PackedORM:
         return TEXT("Packed ORM");
     case EMaterialPilotSemantic::PackedRMA:

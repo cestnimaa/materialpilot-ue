@@ -26,6 +26,10 @@ Select mesh/component -> select textures -> analyze -> dry run -> build material
   - Emissive
   - Specular
   - Gloss / Smoothness
+  - Height / Displacement / Bump / Depth as optional inputs
+- Uses weighted semantic scoring plus texture data hints, so strong role words like `metalness`, `roughness`, and `normal` beat weak shared words like `base`.
+- Resolves duplicates automatically instead of blocking the build. For example, if both DirectX/default and OpenGL normal variants are selected, MaterialPilot prefers the Unreal-friendly DirectX/default normal and ignores the OpenGL variant.
+- Builds the best material it can with the maps available. Missing optional maps use Unreal/material defaults, and unknown extra textures are ignored rather than treated as fatal errors.
 - Detects packed channel maps:
   - ORM / ARM: R=AO, G=Roughness, B=Metallic
   - RMA: R=Roughness, G=Metallic, B=AO
@@ -40,7 +44,7 @@ Select mesh/component -> select textures -> analyze -> dry run -> build material
 
 ## Compatibility
 
-MaterialPilot is delivered as a source C++ editor plugin. The `.uplugin` intentionally does not pin `EngineVersion`, so Unreal can rebuild it for UE 5.x projects and future UE5 versions when the editor APIs remain compatible. Version 1.0.1 has been verified to compile in Unreal Engine 5.8.
+MaterialPilot is delivered as a source C++ editor plugin. The `.uplugin` intentionally does not pin `EngineVersion`, so Unreal can rebuild it for UE 5.x projects and future UE5 versions when the editor APIs remain compatible. Version 1.1.0 has been verified to compile in Unreal Engine 5.8.
 
 The plugin uses editor-side systems that are stable across UE5:
 
@@ -93,7 +97,9 @@ Included:
 
 - Single captured target slot
 - Selected texture-set workflow
-- Explainable token-based classifier
+- Explainable weighted classifier with texture-data hints
+- Automatic duplicate and variant resolution
+- Non-blocking unknown/optional texture handling
 - Packed ORM/RMA/MRA support
 - Texture setting cleanup
 - Generated parent material cache
@@ -116,7 +122,7 @@ Planned next:
 - The tool does not use cloud AI.
 - It does not overwrite existing user materials.
 - It marks changed assets dirty so you can review and save them normally in Unreal.
-- Ambiguous low-confidence texture inputs should be reviewed before building.
+- Unknown textures do not block the build; they are reported and ignored.
 
 ## License
 
